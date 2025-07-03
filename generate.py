@@ -9,10 +9,11 @@ load_dotenv()
 
 # 新しいClientの初期化方法
 chroma_client = chromadb.PersistentClient(path="./chroma_db_store")
+
 # コレクション取得
 collection = chroma_client.get_or_create_collection(name="acp_generate")
 
-model = SentenceTransformer("paraphrase-multilingual-MiniLM-L12-v2")
+model = SentenceTransformer("paraphrase-multilingual-MiniLM-L12-v2",device = 'cpu')
 chroma_client = chromadb.Client()
 collection = chroma_client.get_or_create_collection(name="acp_generate")
 
@@ -47,6 +48,7 @@ if st.button("台本を生成"):
 
         # プロンプト作成
         prompt = f"""
+
 以下はACP会話の例です：
 
 {references}
@@ -60,7 +62,7 @@ if st.button("台本を生成"):
 
 【形式】
 ・話者名（医師、患者）を明記してください。
-・15分程度の自然な日本語の対話で構成してください。
+・例の対話と同じくらいの長さの自然な日本語の対話で構成してください。
 """
 
         # GPT呼び出し
@@ -68,6 +70,7 @@ if st.button("台本を生成"):
             response = client.chat.completions.create(
                 model="gpt-4.1",
                 messages=[{"role": "user", "content": prompt}],
+                max_tokens=2000,
                 temperature=0.7
             )
             script = response.choices[0].message.content
