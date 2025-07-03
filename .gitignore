@@ -1,0 +1,7 @@
+.env
+venv/
+.VENV/
+.venv/
+env/
+ENV/
+ACP_generate_env/
